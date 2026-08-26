@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق مسار التربية الذكي</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --primary: #22c55e;
+            --secondary: #7c3aed;
+        }
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 20px;
+        }
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .badge {
+            background-color: #dcfce7;
+            color: #15803d;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .tab-btn {
+            background-color: var(--border-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+        .container {
+            padding: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: right;
+            cursor: pointer;
+        }
+        .card:hover, .card.selected {
+            border-color: var(--primary);
+            background-color: rgba(34, 197, 94, 0.08);
+        }
+        .card h4 {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .card p {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+        .details-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .tip-box {
+            background-color: rgba(254, 240, 138, 0.2);
+            border: 1px solid #fef08a;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .chat-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .msg.bot {
+            background-color: var(--border-color);
+            color: var(--text-color);
+            align-self: flex-start;
+        }
+        .msg.user {
+            background-color: var(--secondary);
+            color: #ffffff;
+            align-self: flex-end;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid var(--border-color);
+            gap: 8px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+        }
+        .chat-input-area button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .calc-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .calc-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .result-box {
+            margin-top: 12px;
+            padding: 10px;
+            background-color: rgba(34, 197, 94, 0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .vaccine-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+        }
+        .vaccine-item:last-child { border-bottom: none; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <span>👶 مسار التربية الذكي</span>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙 الوضع</button>
+                <span class="badge">آمن 100%</span>
+            </div>
+        </div>
+        <div class="tabs">
+            <button onclick="switchTab('roadmap')" id="btn-roadmap" class="tab-btn active">مراحل النمو</button>
+            <button onclick="switchTab('ai-advisor')" id="btn-ai-advisor" class="tab-btn">المستشار الذكي</button>
+            <button onclick="switchTab('milestones')" id="btn-milestones" class="tab-btn">المهارات</button>
+            <button onclick="switchTab('vaccines')" id="btn-vaccines" class="tab-btn">التطعيمات</button>
+            <button onclick="switchTab('age-calc')" id="btn-age-calc" class="tab-btn">حاسبة العمر</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- قسم مراحل النمو -->
+        <div id="section-roadmap">
+            <h3 class="section-title">اختر المرحلة العمرية:</h3>
+            <div class="grid-cards">
+                <div onclick="selectStage(0)" class="card selected" id="card-0">
+                    <h4>🤰 مرحلة الحمل</h4>
+                    <p>من 1 إلى 9 أشهر</p>
+                </div>
+                <div onclick="selectStage(1)" class="card" id="card-1">
+                    <h4>👶 حديث الولادة</h4>
+                    <p>من 0 إلى 12 شهر</p>
+                </div>
+                <div onclick="selectStage(2)" class="card" id="card-2">
+                    <h4>🏃 الطفولة المبكرة</h4>
+                    <p>من 1 إلى 3 سنوات</p>
+                </div>
+                <div onclick="selectStage(3)" class="card" id="card-3">
+                    <h4>🎒 سن المدرسة</h4>
+                    <p>من 4 إلى 12 سنة</p>
+                </div>
+            </div>
+
+            <div class="details-box" id="details-box"></div>
+        </div>
+
+        <!-- قسم المستشار الذكي -->
+        <div id="section-ai-advisor" class="hidden">
+            <h3 class="section-title">المستشار التربوي الذكي</h3>
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="msg bot">مرحباً بك! أنا مستشارك التربوي. كيف يمكنني مساعدتك اليوم؟</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا...">
+                    <button onclick="sendMessage()">إرسال</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم المهارات -->
+        <div id="section-milestones" class="hidden">
+            <h3 class="section-title">قائمة مهارات الطفل</h3>
+            <div class="details-box" style="display: flex; flex-direction: column; gap: 10px;">
+                <label><input type="checkbox"> يبتسم استجابة للأشخاص المحيطين</label>
+                <label><input type="checkbox"> يرفع رأسه بثبات عند الاستلقاء</label>
+                <label><input type="checkbox"> يتفاعل مع أصوات الوالدين</label>
+                <label><input type="checkbox"> يمسك بالألعاب الصغيرة بيده</label>
+            </div>
+        </div>
+
+        <!-- قسم جدول التطعيمات -->
+        <div id="section-vaccines" class="hidden">
+            <h3 class="section-title">جدول التطعيمات الأساسية</h3>
+            <div class="details-box">
+                <div class="vaccine-item">
+                    <span><b>عند الولادة:</b> الدرن / الكبد الفيروسي (ب)</span>
+                    <input type="checkbox">
+                </div>
+                <div class="vaccine-item">
+                    <span><b>عمر شهرين:</b> الخماسي / شلل الأطفال</span>
+                    <input type="checkbox">
+                </div>
+                <div class="vaccine-item">
+                    <span><b>عمر 4 أشهر:</b> الجرعة الثانية الخماسي</span>
+                    <input type="checkbox">
+                </div>
+                <div class="vaccine-item">
+                    <span><b>عمر 6 أشهر:</b> الجرعة الثالثة الخماسي</span>
+                    <input type="checkbox">
+                </div>
+                <div class="vaccine-item">
+                    <span><b>عمر 9 أشهر:</b> تطعيم الحصبة</span>
+                    <input type="checkbox">
+                </div>
+                <div class="vaccine-item">
+                    <span><b>عمر 12 شهر:</b> الثلاثي الفيروسي (MMR)</span>
+                    <input type="checkbox">
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم حاسبة العمر -->
+        <div id="section-age-calc" class="hidden">
+            <h3 class="section-title">حاسبة عمر الطفل الدقيقة</h3>
+            <div class="details-box calc-box">
+                <label style="font-size:12px; display:block; margin-bottom:5px;">اختر تاريخ ميلاد الطفل:</label>
+                <input type="date" id="birth-date">
+                <button class="calc-btn" onclick="calculateAge()">احسب العمر الآن</button>
+                <div id="calc-result" class="result-box hidden"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const stagesData = [
+            { title: "مرحلة الحمل", desc: "العناية بصحة الأم النفسية والتغذية السليمة لبناء الجنين.", tip: "حافظي على التغذية المتوازنة واستشارة الطبيب باستمرار." },
+            { title: "حديث الولادة (0-12 شهر)", desc: "مرحلة تنظيم الرضاعة والنوم وبناء الشعور للأمان.", tip: "التلامس الجلدي يهدئ الطفل ويساعد على انتظام نومه." },
+            { title: "الطفولة المبكرة (1-3 سنوات)", desc: "مرحلة استكشاف الحركة والعناد وتطوير الكلام.", tip: "تعامل مع نوبات الغضب بهدوء واستمع لمشاعره." },
+            { title: "سن المدرسة (4-12 سنة)", desc: "بناء المهارات الاجتماعية والاعتماد على النفس.", tip: "شجع طفلك على التجربة والتعلم من الأخطاء." }
+        ];
+
+        function switchTab(tabName) {
+            const tabs = ['roadmap', 'ai-advisor', 'milestones', 'vaccines', 'age-calc'];
+            tabs.forEach(t => {
+                document.getElementById('section-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).classList.remove('active');
+            });
+
+            document.getElementById('section-' + tabName).classList.remove('hidden');
+            document.getElementById('btn-' + tabName).classList.add('active');
+        }
+
+        function selectStage(index) {
+            for(let i = 0; i < 4; i++) {
+                document.getElementById('card-' + i).classList.remove('selected');
+            }
+            document.getElementById('card-' + index).classList.add('selected');
+
+            const data = stagesData[index];
+            document.getElementById('details-box').innerHTML = `
+                <h4 style="font-size:14px; margin-bottom:5px;">${data.title}</h4>
+                <p style="font-size:12px; opacity:0.8; margin-bottom:10px;">${data.desc}</p>
+                <div class="tip-box">💡 <b>نصيحة:</b> ${data.tip}</div>
+            `;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML += `<div class="msg user">${msg}</div>`;
+            input.value = '';
+
+            setTimeout(() => {
+                chat.innerHTML += `<div class="msg bot">شكراً لسؤالك! المبدأ الأساسي هو الاستماع لطفلك وإظهار التفهم مع وضع حدود واضحة.</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 600);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function calculateAge() {
+            const birthInput = document.getElementById('birth-date').value;
+            if(!birthInput) return;
+
+            const birthDate = new Date(birthInput);
+            const today = new Date();
+
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const resultDiv = document.getElementById('calc-result');
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = `عمر طفلك الحالي:<br> 👶 ${years} سنة و ${months} شهر و ${days} يوم`;
+        }
+
+        selectStage(0);
+    </script>
+</body>
+</html>
