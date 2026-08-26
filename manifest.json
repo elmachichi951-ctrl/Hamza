@@ -1,0 +1,9 @@
+{
+  "name": "مسار التربية الذكي",
+  "short_name": "مسار",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22c55e",
+  "description": "تطبيق ومستشار تربوي ذكي لمتابعة نمو الطفل وتطعيماته"
+}
